@@ -1,82 +1,37 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 
 const VideoPlayer = ({ videoId, title, onComplete, goToNextStep, goToPreviousStep, goToTop }) => {
-  const playerRef = useRef(null);
-  const playerId = `youtube-player-${videoId}`;
-
-  useEffect(() => {
-    const loadYouTubeIframeAPI = () => {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    };
-
-    if (!window.YT) {
-      loadYouTubeIframeAPI();
-    } else {
-      createPlayer();
-    }
-
-    window.onYouTubeIframeAPIReady = createPlayer;
-
-    function createPlayer() {
-      if (!window.YT || !window.YT.Player) {
-        return;
-      }
-      playerRef.current = new window.YT.Player(playerId, {
-        height: '360',
-        width: '640',
-        videoId: videoId,
-        events: {
-          onStateChange: (event) => {
-            if (event.data === window.YT.PlayerState.ENDED) {
-              onComplete();
-            }
-          },
-        },
-      });
-    }
-
-    return () => {
-      if (playerRef.current) {
-        playerRef.current.destroy();
-      }
-    };
-  }, [videoId, onComplete, playerId]);
-
-  const handlePlayPause = () => {
-    if (playerRef.current && playerRef.current.getPlayerState) {
-      if (playerRef.current.getPlayerState() === window.YT.PlayerState.PLAYING) {
-        playerRef.current.pauseVideo();
-      } else {
-        playerRef.current.playVideo();
-      }
-    }
+  const handleComplete = () => {
+    onComplete();
+    goToNextStep();
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <Typography variant="h5" gutterBottom>{title}</Typography>
-      <div id={playerId}></div>
-      <Button onClick={handlePlayPause} sx={{ mt: 2 }}>
-        再生/一時停止
-      </Button>
-      <Typography variant="caption" sx={{ mt: 1 }}>
-        動画が終了すると自動的に次のステップに進みます。
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+      <Typography variant="h5" gutterBottom>
+        {title}
       </Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 2 }}>
-        <Button onClick={goToPreviousStep} variant="outlined" color="secondary">
+      <iframe
+        width="560"
+        height="315"
+        src={`https://www.youtube.com/embed/${videoId}`}
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2 }}>
+        <Button variant="outlined" color="secondary" onClick={goToPreviousStep}>
           戻る
         </Button>
-        <Button onClick={goToNextStep} variant="contained" color="primary">
+        <Button variant="contained" color="primary" onClick={handleComplete}>
           次へ
         </Button>
+        <Button variant="outlined" color="secondary" onClick={goToTop}>
+          トップに戻る
+        </Button>
       </Box>
-      <Button onClick={goToTop} variant="outlined" color="secondary" sx={{ mt: 2 }}>
-        トップに戻る
-      </Button>
     </Box>
   );
 };

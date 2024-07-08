@@ -87,7 +87,7 @@ const App = () => {
   };
 
   const generateCSVContent = () => {
-    const header = ['Time', 'Name', 'Video No.', ...questions.map(q => `<${q.text}>`), '回答'].join(',');
+    const header = ['Time', 'Name', 'Video No.', ...questions.map(q => `<${q.text}>`)].join(',');
     const timestamp = new Date().toLocaleString();
     const rows = Object.entries(surveyAnswers).flatMap(([videoKey, answers], videoIndex) => {
       return questions.map((question, questionIndex) => {

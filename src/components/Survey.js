@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Button, Typography, Radio, RadioGroup, FormControlLabel, TextField, Slider } from '@mui/material';
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Typography } from '@mui/material';
 
 const Survey = ({ questions, onComplete, goToNextStep, goToPreviousStep, isLastStep, goToTop }) => {
-  const [answers, setAnswers] = useState({});
+  const [answers, setAnswers] = useState(Array(questions.length).fill(''));
 
-  const handleAnswer = (questionIndex, answer) => {
-    setAnswers({ ...answers, [questionIndex]: answer });
+  const handleChange = (index, value) => {
+    const newAnswers = [...answers];
+    newAnswers[index] = value;
+    setAnswers(newAnswers);
   };
 
   const handleSubmit = (e) => {
@@ -14,57 +16,39 @@ const Survey = ({ questions, onComplete, goToNextStep, goToPreviousStep, isLastS
   };
 
   return (
-    <Box>
+    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Typography variant="h5" gutterBottom>
         アンケート
       </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-        {questions.map((question, index) => (
-          <Box key={index} sx={{ mb: 3 }}>
-            <Typography variant="body1" gutterBottom>
-              {question.text}
-            </Typography>
-            {question.type === 'multiple-choice' && (
-              <RadioGroup
-                value={answers[index] || ''}
-                onChange={(e) => handleAnswer(index, e.target.value)}
-              >
-                {question.options.map((option, idx) => (
-                  <FormControlLabel key={idx} value={option} control={<Radio />} label={option} />
-                ))}
-              </RadioGroup>
-            )}
-            {question.type === 'text' && (
-              <TextField
-                fullWidth
-                multiline
-                rows={4}
-                value={answers[index] || ''}
-                onChange={(e) => handleAnswer(index, e.target.value)}
+      {questions.map((question, index) => (
+        <FormControl component="fieldset" key={index} sx={{ mt: 2 }}>
+          <FormLabel component="legend">{question.text}</FormLabel>
+          <RadioGroup
+            row
+            value={answers[index]}
+            onChange={(e) => handleChange(index, e.target.value)}
+            sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}
+          >
+            {question.options.map((option, i) => (
+              <FormControlLabel
+                key={i}
+                value={option}
+                control={<Radio color="primary" />}
+                label={option}
+                sx={{ flex: '1 1 auto', textAlign: 'center' }}
               />
-            )}
-            {question.type === 'slider' && (
-              <Slider
-                value={answers[index] || 50}
-                onChange={(e, newValue) => handleAnswer(index, newValue)}
-                valueLabelDisplay="auto"
-                step={1}
-                marks
-                min={0}
-                max={100}
-              />
-            )}
-          </Box>
-        ))}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-          <Button onClick={goToPreviousStep} variant="outlined" color="secondary">
-            戻る
-          </Button>
-          <Button type="submit" variant="contained" color="primary">
-            {isLastStep ? '完了' : '次へ'}
-          </Button>
-        </Box>
-        <Button onClick={goToTop} variant="outlined" color="secondary" sx={{ mt: 2 }}>
+            ))}
+          </RadioGroup>
+        </FormControl>
+      ))}
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2 }}>
+        <Button variant="outlined" color="secondary" onClick={goToPreviousStep}>
+          戻る
+        </Button>
+        <Button type="submit" variant="contained" color="primary">
+          {isLastStep ? '完了' : '次へ'}
+        </Button>
+        <Button variant="outlined" color="secondary" onClick={goToTop}>
           トップに戻る
         </Button>
       </Box>
