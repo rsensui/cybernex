@@ -24,15 +24,15 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Debug
+        run: |
+          git --version
+          git config --global --add safe.directory /github/workspace
+          git status
+          ls -la
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.GH_PAT }}
           publish_dir: ./build
-          - name: Debug
-          run: |
-            git --version
-            git config --global --add safe.directory /github/workspace
-            git status
-            ls -la
-  
