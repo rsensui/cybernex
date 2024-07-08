@@ -6,7 +6,6 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 const QuestionEditor = ({ initialQuestions, onQuestionsCreated }) => {
   const [questions, setQuestions] = useState(initialQuestions);
   const [newQuestion, setNewQuestion] = useState('');
-  const [currentQuestion, setCurrentQuestion] = useState(''); // ここを削除するか使用する
 
   const handleAddQuestion = () => {
     setQuestions([...questions, newQuestion]);
