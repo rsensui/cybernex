@@ -1,5 +1,3 @@
-// src/components/QuestionEditor.js
-
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 
