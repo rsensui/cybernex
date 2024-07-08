@@ -29,3 +29,10 @@ jobs:
         with:
           personal_token: ${{ secrets.GH_PAT }}
           publish_dir: ./build
+          - name: Debug
+          run: |
+            git --version
+            git config --global --add safe.directory /github/workspace
+            git status
+            ls -la
+  
